@@ -1,0 +1,31 @@
+---
+title: "Using ServletUriComponentsBuilder with Nginx"
+date: 2017-03-13
+draft: false
+aliases: [/2017/03/13/using-servleturicomponentsbuilder-with-nginx/]
+---
+:source-highlighter: rouge
+:rouge-css: style
+:rouge-style: github
+:imagesdir: /images
+:icons: font
+
+Spring's `ServletUriComponentsBuilder.fromCurrentRequest()` can be really convinient to build an URL from the current request. However, when using Nginx, things might work so well.
+
+The solution is simple, just add these headers to your Nginx configuration file:
+
+....
+proxy_set_header        X-Forwarded-Host   $host:443;
+proxy_set_header        X-Forwarded-Server $host;
+proxy_set_header        X-Forwarded-Port   443;
+proxy_set_header        X-Forwarded-Proto  https;
+....
+
+_UPDATE 2020-06-08_
+
+You need to enable support for this in Spring Boot by setting the following property (Since Spring Boot 2.2):
+
+[source]
+----
+server.forward-headers-strategy=native
+----
